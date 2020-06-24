@@ -1,17 +1,11 @@
 const Koa = require('koa')
-const requireDirectory = require('require-directory')  // 自动加载路由
-const Router = require('koa-router')
+const parser = require('koa-bodyparser')
+const InitMangager = require('./core/init')
+const catchError = require('./middleware/exception')
 
 const app =new Koa()
-
-requireDirectory(module, './app/api', {
-    visit: whenLoadModule
-})
-
-function whenLoadModule(obj) {
-    if (obj instanceof Router) {
-        app.use(obj.routes())
-    }
-}
+app.use(parser())
+app.use(catchError)
+InitMangager.initCore(app)
 
 app.listen(5115)
